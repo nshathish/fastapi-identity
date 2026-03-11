@@ -4,10 +4,9 @@ from sqlalchemy.ext.asyncio.session import AsyncSession
 from sqlmodel import select
 
 from fastapi_identity.models.user_model import User
-from fastapi_identity.stores.base import BaseUserStore
 
 
-class SQLModelUserStore(BaseUserStore):
+class UserStore:
     """SQLModel/SQLAlchemy-backed user store using AsyncSession."""
 
     def __init__(self, session: AsyncSession | Any) -> None:

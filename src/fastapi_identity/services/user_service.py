@@ -2,13 +2,13 @@ from fastapi_identity.core.exceptions import UserAlreadyExistsError, InvalidCred
 from fastapi_identity.schemas.user_schemas import UserCreate, TokenResponse
 from fastapi_identity.services.password_service import PasswordService
 from fastapi_identity.services.token_service import TokenService
-from fastapi_identity.stores.base import BaseUserStore
+from fastapi_identity.stores.user_store import UserStore
 
 
 class UserService:
     """Orchestrates user registration and authentication."""
 
-    def __init__(self, store: BaseUserStore, token_service: TokenService) -> None:
+    def __init__(self, store: UserStore, token_service: TokenService) -> None:
         self._store = store
         self._token_service = token_service
 

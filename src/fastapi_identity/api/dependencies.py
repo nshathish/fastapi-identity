@@ -5,13 +5,13 @@ from fastapi_identity.core.exceptions import InvalidTokenError
 from fastapi_identity.models.user_model import User
 from fastapi_identity.security.claims import ClaimsPrincipal, Claim
 from fastapi_identity.services.token_service import TokenService
-from fastapi_identity.stores.base import BaseUserStore
+from fastapi_identity.stores.user_store import UserStore
 
 _security = HTTPBearer()
 
 
 def require_user(
-        store: BaseUserStore,
+        store: UserStore,
         token_service: TokenService,
 ):
     """
@@ -47,7 +47,7 @@ def require_user(
 
 
 def require_principal(
-        store: BaseUserStore,
+        store: UserStore,
         token_service: TokenService,
 ):
     """

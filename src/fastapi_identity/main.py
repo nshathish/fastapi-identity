@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
 from fastapi_identity.api.roues.v1.auth_routes import create_auth_router
+from fastapi_identity.api.roues.v1.oauth_routes import create_oauth_router
 from fastapi_identity.core.database import init_db, close_db, check_db_ready
 from fastapi_identity.core.exception_handlers import register_exception_handlers
 from fastapi_identity.core.logging import get_logger, setup_logging
@@ -48,8 +49,8 @@ def create_application() -> FastAPI:
     # --- Wire up identity ---
     token_service = TokenService()
 
-    auth_router = create_auth_router(token_service=token_service)
-    application.include_router(auth_router)
+    application.include_router(create_auth_router(token_service=token_service))
+    application.include_router(create_oauth_router(token_service=token_service))
 
     return application
 
