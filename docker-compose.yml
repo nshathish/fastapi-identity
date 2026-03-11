@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:17-alpine
+    container_name: fastapi_identity_postgres
+    environment:
+      POSTGRES_USER: fastapi_user
+      POSTGRES_PASSWORD: fastapi_password!123
+      POSTGRES_DB: fastapi_identity
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
