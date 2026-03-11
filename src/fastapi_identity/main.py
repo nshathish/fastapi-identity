@@ -10,13 +10,12 @@ from fastapi_identity.core.exception_handlers import register_exception_handlers
 from fastapi_identity.core.logging import get_logger, setup_logging
 from fastapi_identity.core.settings import get_settings
 from fastapi_identity.services.token_service import TokenService
-from fastapi_identity.stores.sqlmodel import SQLModelUserStore
 
 logger = get_logger("main")
 
 
 @asynccontextmanager
-async def lifespan(app: FastAPI):
+async def lifespan(app_in: FastAPI):
     setup_logging()
     logger.info("Application starting")
 
@@ -48,9 +47,8 @@ def create_application() -> FastAPI:
 
     # --- Wire up identity ---
     token_service = TokenService()
-    store = SQLModelUserStore()
 
-    auth_router = create_auth_router(store=store, token_service=token_service)
+    auth_router = create_auth_router(token_service=token_service)
     application.include_router(auth_router)
 
     return application

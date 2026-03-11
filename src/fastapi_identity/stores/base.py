@@ -4,34 +4,19 @@ from fastapi_identity.models.user_model import User
 
 
 class BaseUserStore(ABC):
-    """Abstract interface for user persistence.
-
-        Implement this to plug in any database backend.
-        The library ships with a SQLModel implementation,
-        but consumers can provide their own.
-        """
+    """Abstract interface for user persistence."""
 
     @abstractmethod
-    async def get_by_id(self, user_id: str) -> User | None:
-        """Retrieve a user by their unique ID."""
-        ...
+    async def get_by_id(self, user_id: str) -> User | None: ...
 
     @abstractmethod
-    async def get_by_email(self, email: str) -> User | None:
-        """Retrieve a user by email address."""
-        ...
+    async def get_by_email(self, email: str) -> User | None: ...
 
     @abstractmethod
-    async def create(self, email: str, hashed_password: str) -> User:
-        """Persist a new user and return the created record."""
-        ...
+    async def create(self, email: str, hashed_password: str) -> User: ...
 
     @abstractmethod
-    async def update(self, user: User) -> User:
-        """Update an existing user record."""
-        ...
+    async def update(self, user: User) -> User: ...
 
     @abstractmethod
-    async def delete(self, user_id: str) -> bool:
-        """Delete a user by ID. Returns True if deleted."""
-        ...
+    async def delete(self, user_id: str) -> bool: ...

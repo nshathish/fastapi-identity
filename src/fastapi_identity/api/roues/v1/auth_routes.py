@@ -1,15 +1,14 @@
 from fastapi import APIRouter, Depends
 
 from fastapi_identity.api.dependencies import require_user
-from fastapi_identity.models.user_model import User
+from fastapi_identity.core.database import get_session
 from fastapi_identity.schemas.user_schemas import TokenResponse, UserCreate, UserLogin, UserRead
 from fastapi_identity.services.token_service import TokenService
 from fastapi_identity.services.user_service import UserService
-from fastapi_identity.stores.base import BaseUserStore
+from fastapi_identity.stores.sqlmodel import SQLModelUserStore
 
 
 def create_auth_router(
-        store: BaseUserStore,
         token_service: TokenService,
         prefix: str = "/auth",
         tags: list[str] | None = None,
@@ -22,23 +21,30 @@ def create_auth_router(
     """
 
     router = APIRouter(prefix=prefix, tags=tags or ["auth"])
-    user_service = UserService(store=store, token_service=token_service)
-    get_current_user = require_user(store, token_service)
 
     @router.post("/register", response_model=TokenResponse, status_code=201)
-    async def register(data: UserCreate):
+    async def register(data: UserCreate, session=Depends(get_session)):
+        store = SQLModelUserStore(session)
+        user_service = UserService(store=store, token_service=token_service)
         return await user_service.register(data)
 
     @router.post("/login", response_model=TokenResponse)
-    async def login(data: UserLogin):
+    async def login(data: UserLogin, session=Depends(get_session)):
+        store = SQLModelUserStore(session)
+        user_service = UserService(store=store, token_service=token_service)
         return await user_service.authenticate(data.email, data.password)
 
     @router.post("/refresh", response_model=TokenResponse)
-    async def refresh(refresh_token: str):
+    async def refresh(refresh_token: str, session=Depends(get_session)):
+        store = SQLModelUserStore(session)
+        user_service = UserService(store=store, token_service=token_service)
         return await user_service.refresh(refresh_token)
 
     @router.get("/me", response_model=UserRead)
-    async def me(user: User = Depends(get_current_user)):
+    async def me(session=Depends(get_session)):
+        store = SQLModelUserStore(session)
+        get_current_user = require_user(store, token_service)
+        user = await get_current_user()
         return UserRead(
             id=user.id,
             email=user.email,
